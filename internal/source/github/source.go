@@ -23,8 +23,14 @@ const (
 	defaultConcurrency = 5
 )
 
-// Source implements source.Source for GitHub-starred repos.
+// Source implements source.Source (and source.Unstarer) for GitHub-starred
+// repos.
 type Source struct{}
+
+var (
+	_ source.Source   = (*Source)(nil)
+	_ source.Unstarer = (*Source)(nil)
+)
 
 // New constructs a GitHub source. It performs no I/O itself; auth is
 // resolved lazily on the first Fetch call.
@@ -33,6 +39,26 @@ func New() (source.Source, error) {
 }
 
 func (s *Source) Name() string { return "github" }
+
+// Unstar removes the authenticated user's star from owner/name. It
+// implements source.Unstarer.
+func (s *Source) Unstar(ctx context.Context, owner, name string) error {
+	client, err := newClient(ctx)
+	if err != nil {
+		return err
+	}
+	return unstarRepo(ctx, client, owner, name)
+}
+
+func unstarRepo(ctx context.Context, client *github.Client, owner, name string) error {
+	_, err := withRetry(ctx, func() (*github.Response, error) {
+		return client.Activity.Unstar(ctx, owner, name)
+	})
+	if err != nil {
+		return fmt.Errorf("unstar %s/%s: %w", owner, name, err)
+	}
+	return nil
+}
 
 // Fetch lists the repos starred by opts.Username (or the authenticated
 // user if empty), then fetches each one's README concurrently, streaming

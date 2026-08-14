@@ -189,6 +189,34 @@ func TestFetchReadmesReportsPerRecordErrors(t *testing.T) {
 	}
 }
 
+func TestUnstarRepo(t *testing.T) {
+	var gotMethod, gotPath string
+	mux := http.NewServeMux()
+	mux.HandleFunc("/user/starred/foo/bar", func(w http.ResponseWriter, r *http.Request) {
+		gotMethod, gotPath = r.Method, r.URL.Path
+		w.WriteHeader(http.StatusNoContent)
+	})
+	mux.HandleFunc("/user/starred/foo/missing", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+		_ = json.NewEncoder(w).Encode(map[string]any{"message": "Not Found"})
+	})
+	srv := httptest.NewServer(mux)
+	defer srv.Close()
+
+	client := newTestClient(t, srv)
+
+	if err := unstarRepo(context.Background(), client, "foo", "bar"); err != nil {
+		t.Fatalf("unstarRepo: %v", err)
+	}
+	if gotMethod != http.MethodDelete || gotPath != "/user/starred/foo/bar" {
+		t.Fatalf("unexpected request: method=%q path=%q", gotMethod, gotPath)
+	}
+
+	if err := unstarRepo(context.Background(), client, "foo", "missing"); err == nil {
+		t.Fatalf("expected unstarRepo to error on a 404")
+	}
+}
+
 func TestBackoffForClassification(t *testing.T) {
 	rateErr := &github.RateLimitError{Rate: github.Rate{Reset: github.Timestamp{Time: time.Now().Add(time.Minute)}}}
 	if _, retryable := backoffFor(rateErr, 0); !retryable {

@@ -33,9 +33,14 @@ repogrep show owner/name --readme
 
 # Find archived/inactive repos (dry-run by default).
 repogrep prune
-repogrep prune --months 6 --force        # prompts before deleting
-repogrep prune --months 6 --force --yes  # no prompt, for scripting
+repogrep prune --months 6 --force            # prompts before deleting
+repogrep prune --months 6 --force --yes      # no prompt, for scripting
+repogrep prune --months 6 --force --unstar   # also unstar on GitHub, not just delete locally
 ```
+
+By default `prune` only removes rows from the local database — it never
+touches GitHub. Add `--unstar` (alongside `--force`) to also remove the
+star at the source, for sources that support it.
 
 All commands accept `--db PATH` (default `~/.config/repogrep/repogrep.db`,
 or `$XDG_CONFIG_HOME/repogrep/repogrep.db` if set) and

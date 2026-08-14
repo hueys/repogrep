@@ -72,6 +72,15 @@ type Source interface {
 	Fetch(ctx context.Context, opts FetchOptions) (<-chan FetchResult, error)
 }
 
+// Unstarer is an optional capability: sources for which "starring" is a
+// meaningful concept (GitHub today) can implement it to remove the star at
+// the origin, e.g. when a repo is pruned with --unstar. Sources without an
+// equivalent concept (a curated list, local disk, ...) simply don't
+// implement it; callers type-assert a Source before using it.
+type Unstarer interface {
+	Unstar(ctx context.Context, owner, name string) error
+}
+
 // Factory constructs a Source instance, performing any setup (e.g. auth
 // discovery) that might fail.
 type Factory func() (Source, error)
