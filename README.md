@@ -12,11 +12,41 @@ make build   # embeds a version from `git describe`; see `repogrep -V`
 go build -o repogrep ./cmd/repogrep
 ```
 
+## Authentication
+
+repogrep needs a GitHub token to list your stars and fetch READMEs. It
+looks for one in this order and uses the first it finds:
+
+1. **The `gh` CLI** ([cli.github.com](https://cli.github.com)), if
+   installed and logged in — repogrep runs `gh auth token` for you.
+   This is the easiest path if you already use `gh`; nothing else to
+   configure.
+   ```sh
+   gh auth login
+   ```
+2. **`$GITHUB_TOKEN`** — a [personal access
+   token](https://github.com/settings/tokens), if `gh` isn't installed
+   or isn't logged in.
+   ```sh
+   export GITHUB_TOKEN=ghp_...
+   ```
+
+`gh` itself is **not required** — it's just the more convenient option
+when it's already set up. Either way, the token needs read access to
+whatever repos you've starred; add the `repo` scope if any of your
+stars are private, or you use `prune --unstar` (unstarring needs the
+same scope as reading private repos). `gh auth login`'s default scopes
+already cover this.
+
+If neither is found, commands that talk to GitHub fail with:
+```
+repogrep: no GitHub token found: run `gh auth login` or set GITHUB_TOKEN
+```
+
 ## Usage
 
 ```sh
-# Import (or re-import) everything you've starred on GitHub. Uses `gh auth
-# token` for credentials by default; falls back to $GITHUB_TOKEN.
+# Import (or re-import) everything you've starred on GitHub.
 repogrep import github
 
 # Refresh every source already imported (currently just github).
