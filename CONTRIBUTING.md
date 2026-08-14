@@ -6,8 +6,12 @@ the process is intentionally lightweight.
 ## Getting set up
 
 Requires Go 1.26+ (see `go.mod`). No other tools are required to build
-and test; `golangci-lint` is only needed if you want to run `make lint`
-locally (CI runs it either way).
+and test; `make lint` locally needs
+[`golangci-lint`](https://golangci-lint.run) and
+[`zizmor`](https://docs.zizmor.sh) (the latter audits
+`.github/workflows/` for GitHub Actions security issues, e.g. unpinned
+action references). Neither is required to build/test — CI runs both
+either way.
 
 ```sh
 git clone https://github.com/hueys/repogrep.git

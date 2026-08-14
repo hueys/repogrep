@@ -14,6 +14,7 @@ clean:
 
 lint:
 	golangci-lint run ./...
+	zizmor .github/workflows/
 
 fmt:
 	gofmt -l -w .

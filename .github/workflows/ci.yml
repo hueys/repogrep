@@ -12,9 +12,11 @@ jobs:
   build-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
 
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
         with:
           go-version-file: go.mod
 
@@ -30,13 +32,25 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
 
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
         with:
           go-version-file: go.mod
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@55c2c1448f86e01eaae002a5a3a9624417608d84 # v6.5.2
         with:
-          version: latest
+          # Pinned to a v2.x release: the action's "latest" has resolved to
+          # an old v1.x build (built with an older Go than go.mod targets),
+          # which fails to even load our config. Keep in sync with the
+          # locally installed version (`golangci-lint --version`).
+          version: v2.12.2
+
+      - name: Install zizmor
+        run: pip install --user zizmor==1.29.0
+
+      - name: zizmor (GitHub Actions workflow security)
+        run: ~/.local/bin/zizmor .github/workflows/
