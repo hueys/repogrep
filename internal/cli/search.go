@@ -29,18 +29,8 @@ func runSearch(ctx context.Context, cfg config.Config, args []string) error {
 		fs.Usage()
 		return fmt.Errorf("missing search query")
 	}
-	// Everything before the first flag (i.e. not starting with "-") is the
-	// query; flag.Parse stops at the first non-flag arg, so collect query
-	// words up front and parse flags from the remainder.
-	var queryWords []string
-	i := 0
-	for ; i < len(args); i++ {
-		if strings.HasPrefix(args[i], "-") {
-			break
-		}
-		queryWords = append(queryWords, args[i])
-	}
-	if err := fs.Parse(args[i:]); err != nil {
+	queryWords, flagArgs := splitSearchArgs(args)
+	if err := fs.Parse(flagArgs); err != nil {
 		return err
 	}
 	if len(queryWords) == 0 {
@@ -66,4 +56,19 @@ func runSearch(ctx context.Context, cfg config.Config, args []string) error {
 	}
 	printRepoTable(repos, *jsonOut)
 	return nil
+}
+
+// splitSearchArgs splits args into the free-form query words (everything up
+// to the first arg starting with "-") and the remaining flag arguments.
+// flag.Parse stops at the first non-flag arg, so the query has to be
+// collected up front rather than left to fs.Parse/fs.Args.
+func splitSearchArgs(args []string) (queryWords, flagArgs []string) {
+	i := 0
+	for ; i < len(args); i++ {
+		if strings.HasPrefix(args[i], "-") {
+			break
+		}
+		queryWords = append(queryWords, args[i])
+	}
+	return queryWords, args[i:]
 }
