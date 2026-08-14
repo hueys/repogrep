@@ -22,6 +22,7 @@ func runSearch(ctx context.Context, cfg config.Config, args []string) error {
 	lang := fs.String("lang", "", "filter by primary language")
 	topic := fs.String("topic", "", "filter by topic")
 	includeArchived := fs.Bool("include-archived", false, "include archived repos (excluded by default)")
+	sortBy := fs.String("sort", "", "sort by: relevance (default), stars, updated")
 	limit := fs.Int("limit", cfg.DefaultLimit, "max repos to show (0 = no limit)")
 	jsonOut := fs.Bool("json", false, "output as JSON")
 
@@ -49,6 +50,7 @@ func runSearch(ctx context.Context, cfg config.Config, args []string) error {
 		Language:        *lang,
 		Topic:           *topic,
 		IncludeArchived: *includeArchived,
+		Sort:            *sortBy,
 		Limit:           *limit,
 	})
 	if err != nil {

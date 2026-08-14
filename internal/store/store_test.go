@@ -150,6 +150,52 @@ func TestSearchFTSAndFilters(t *testing.T) {
 	}
 }
 
+func TestSearchSort(t *testing.T) {
+	s := newTestStore(t)
+	now := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+
+	// Both repos match the same query term ("toolkit") so relevance alone
+	// wouldn't reliably separate them; stars/pushed_at are set so
+	// --sort stars/--sort updated have an unambiguous expected order.
+	low := sampleRepo()
+	low.Owner, low.Name, low.FullName = "low", "repo", "low/repo"
+	low.SourceID = "10"
+	low.Description = "a small toolkit"
+	low.README = "toolkit for small things"
+	low.Stars = 5
+	low.PushedAt = now.AddDate(0, 0, -30)
+	if _, _, err := s.UpsertRepo(low); err != nil {
+		t.Fatalf("upsert low: %v", err)
+	}
+
+	high := sampleRepo()
+	high.Owner, high.Name, high.FullName = "high", "repo", "high/repo"
+	high.SourceID = "11"
+	high.Description = "a big toolkit"
+	high.README = "toolkit for big things"
+	high.Stars = 500
+	high.PushedAt = now
+	if _, _, err := s.UpsertRepo(high); err != nil {
+		t.Fatalf("upsert high: %v", err)
+	}
+
+	results, err := s.Search("toolkit", SearchFilters{Sort: "stars"})
+	if err != nil {
+		t.Fatalf("Search sort=stars: %v", err)
+	}
+	if len(results) != 2 || results[0].FullName != "high/repo" || results[1].FullName != "low/repo" {
+		t.Fatalf("expected high/repo then low/repo sorted by stars desc, got %+v", results)
+	}
+
+	results, err = s.Search("toolkit", SearchFilters{Sort: "updated"})
+	if err != nil {
+		t.Fatalf("Search sort=updated: %v", err)
+	}
+	if len(results) != 2 || results[0].FullName != "high/repo" || results[1].FullName != "low/repo" {
+		t.Fatalf("expected high/repo then low/repo sorted by pushed_at desc, got %+v", results)
+	}
+}
+
 func TestSearchExcludesArchivedByDefault(t *testing.T) {
 	s := newTestStore(t)
 

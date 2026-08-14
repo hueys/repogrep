@@ -57,6 +57,7 @@ repogrep list --lang Go --topic cli --sort stars
 
 # Full-text search over README + description + topics.
 repogrep search "retrieval augmented generation" --lang Python
+repogrep search "vector database" --sort stars   # relevance is the default
 
 # Full detail (and README) for one repo.
 repogrep show owner/name --readme

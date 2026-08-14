@@ -11,8 +11,9 @@ import (
 type SearchFilters struct {
 	Language        string
 	Topic           string
-	IncludeArchived bool // if false (default), archived repos are excluded
-	Limit           int  // 0 = no limit
+	IncludeArchived bool   // if false (default), archived repos are excluded
+	Sort            string // "stars", "updated" (pushed_at desc), ""/"relevance" = bm25 rank
+	Limit           int    // 0 = no limit
 }
 
 // Search runs a full-text query over full_name/description/readme/topics,
@@ -43,7 +44,14 @@ func (s *Store) Search(query string, f SearchFilters) ([]model.Repo, error) {
 		args = append(args, f.Topic)
 	}
 
-	sqlQuery += ` ORDER BY bm25(repos_fts) ASC`
+	switch f.Sort {
+	case "stars":
+		sqlQuery += ` ORDER BY r.stars DESC`
+	case "updated":
+		sqlQuery += ` ORDER BY r.pushed_at DESC`
+	default:
+		sqlQuery += ` ORDER BY bm25(repos_fts) ASC`
+	}
 	if f.Limit > 0 {
 		sqlQuery += ` LIMIT ?`
 		args = append(args, f.Limit)
