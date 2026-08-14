@@ -5,6 +5,20 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [v0.2.2] - 2026-08-14
+
+### Fixed
+- `import -h`/`--help` and `show -h`/`--help` (with no source name /
+  `owner/name` given) now show usage instead of a confusing runtime
+  error (`unknown source "-h"` / `no repo named "-h" in the store`).
+  Both commands read a required positional argument before their
+  flags were parsed, so a bare `-h`/`--help` was swallowed as if it
+  were that argument; `list`, `search`, `prune`, and `update` were
+  unaffected since they didn't have this ordering issue.
+- CI: bumped `actions/checkout`, `actions/setup-go`, and
+  `golangci-lint-action` to their Node 24 releases, clearing the
+  "Node.js 20 is deprecated" warnings on every run.
+
 ## [v0.2.1] - 2026-08-14
 
 ### Security
@@ -74,6 +88,7 @@ Initial release.
   repo-scoped `.golangci.yml`.
 - MIT license.
 
+[v0.2.2]: https://github.com/hueys/repogrep/releases/tag/v0.2.2
 [v0.2.1]: https://github.com/hueys/repogrep/releases/tag/v0.2.1
 [v0.2.0]: https://github.com/hueys/repogrep/releases/tag/v0.2.0
 [v0.1.0]: https://github.com/hueys/repogrep/releases/tag/v0.1.0
