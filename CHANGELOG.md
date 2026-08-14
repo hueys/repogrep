@@ -5,6 +5,14 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [v0.3.0] - 2026-08-14
+
+### Added
+- `search --sort`: sort results by `stars` or `updated` (`pushed_at`
+  desc) instead of relevance, matching `list`'s existing `--sort`.
+  Default remains relevance (bm25 rank); `--lang`/`--topic`/
+  `--include-archived` filters still apply either way.
+
 ## [v0.2.2] - 2026-08-14
 
 ### Fixed
@@ -88,6 +96,7 @@ Initial release.
   repo-scoped `.golangci.yml`.
 - MIT license.
 
+[v0.3.0]: https://github.com/hueys/repogrep/releases/tag/v0.3.0
 [v0.2.2]: https://github.com/hueys/repogrep/releases/tag/v0.2.2
 [v0.2.1]: https://github.com/hueys/repogrep/releases/tag/v0.2.1
 [v0.2.0]: https://github.com/hueys/repogrep/releases/tag/v0.2.0
