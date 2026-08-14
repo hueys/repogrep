@@ -23,8 +23,11 @@ func runImport(ctx context.Context, cfg config.Config, args []string) error {
 		fmt.Fprintln(os.Stderr, "\nFlags:")
 		fs.PrintDefaults()
 	}
-	if len(args) == 0 {
+	if len(args) == 0 || isHelpArg(args[0]) {
 		fs.Usage()
+		if len(args) > 0 {
+			return flag.ErrHelp
+		}
 		return fmt.Errorf("missing source name")
 	}
 	sourceName := args[0]

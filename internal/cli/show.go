@@ -15,20 +15,23 @@ import (
 
 func runShow(ctx context.Context, cfg config.Config, args []string) error {
 	fs := flag.NewFlagSet("show", flag.ContinueOnError)
+	cf := registerCommon(fs, cfg)
+	showReadme := fs.Bool("readme", false, "print the full README content")
+	jsonOut := fs.Bool("json", false, "output as JSON")
 	fs.Usage = func() {
 		fmt.Fprintln(os.Stderr, "Usage: repogrep show <owner/name> [flags]")
 		fmt.Fprintln(os.Stderr, "\nFlags:")
 		fs.PrintDefaults()
 	}
-	if len(args) == 0 {
+	if len(args) == 0 || isHelpArg(args[0]) {
 		fs.Usage()
+		if len(args) > 0 {
+			return flag.ErrHelp
+		}
 		return fmt.Errorf("missing owner/name")
 	}
 	fullName := args[0]
 
-	cf := registerCommon(fs, cfg)
-	showReadme := fs.Bool("readme", false, "print the full README content")
-	jsonOut := fs.Bool("json", false, "output as JSON")
 	if err := fs.Parse(args[1:]); err != nil {
 		return err
 	}

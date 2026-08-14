@@ -2,6 +2,7 @@ package cli
 
 import (
 	"flag"
+	"strings"
 	"time"
 
 	"github.com/hueys/repogrep/internal/config"
@@ -29,6 +30,20 @@ func registerCommon(fs *flag.FlagSet, cfg config.Config) *commonFlags {
 
 func openStore(cf *commonFlags) (*store.Store, error) {
 	return store.Open(cf.db)
+}
+
+// isHelpArg reports whether arg is a help flag in any form the stdlib
+// flag package itself recognizes ("-h", "--h", "-help", "--help").
+// Needed because `import` and `show` read a required positional argument
+// (source name / owner/name) directly from args[0] before fs.Parse ever
+// runs, which would otherwise swallow a "-h"/"--help" passed with no
+// positional argument as if it were one, instead of showing help.
+func isHelpArg(arg string) bool {
+	if !strings.HasPrefix(arg, "-") {
+		return false
+	}
+	trimmed := strings.TrimPrefix(strings.TrimPrefix(arg, "-"), "-")
+	return trimmed == "h" || trimmed == "help"
 }
 
 // storeUpserter is the slice of *store.Store that ingest needs; narrowing
