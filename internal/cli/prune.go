@@ -55,7 +55,7 @@ func runPrune(ctx context.Context, cfg config.Config, args []string) error {
 		tw := tabwriter.NewWriter(os.Stdout, 0, 2, 2, ' ', 0)
 		_, _ = fmt.Fprintln(tw, "REPO\tSTARS\tUPDATED\tREASON")
 		for _, c := range candidates {
-			_, _ = fmt.Fprintf(tw, "%s\t%d\t%s\t%s\n", c.Repo.FullName, c.Repo.Stars, dateOrDash(c.Repo.PushedAt), c.Reason)
+			_, _ = fmt.Fprintf(tw, "%s\t%d\t%s\t%s\n", sanitizeTerminal(c.Repo.FullName), c.Repo.Stars, dateOrDash(c.Repo.PushedAt), c.Reason)
 		}
 		_ = tw.Flush()
 	}
@@ -130,15 +130,15 @@ func unstarCandidates(ctx context.Context, candidates []store.PruneCandidate, ve
 		}
 
 		if r.err != nil {
-			fmt.Fprintf(os.Stderr, "repogrep: %s left starred: %v\n", c.Repo.FullName, r.err)
+			fmt.Fprintf(os.Stderr, "repogrep: %s left starred: %v\n", sanitizeTerminal(c.Repo.FullName), r.err)
 			continue
 		}
 		if err := r.unstarer.Unstar(ctx, c.Repo.Owner, c.Repo.Name); err != nil {
-			fmt.Fprintf(os.Stderr, "repogrep: unstar %s: %v\n", c.Repo.FullName, err)
+			fmt.Fprintf(os.Stderr, "repogrep: unstar %s: %v\n", sanitizeTerminal(c.Repo.FullName), err)
 			continue
 		}
 		if verbose {
-			fmt.Printf("unstarred %s\n", c.Repo.FullName)
+			fmt.Printf("unstarred %s\n", sanitizeTerminal(c.Repo.FullName))
 		}
 	}
 }

@@ -53,15 +53,15 @@ func runShow(ctx context.Context, cfg config.Config, args []string) error {
 		return enc.Encode(repo)
 	}
 
-	fmt.Printf("%s\n", repo.FullName)
+	fmt.Printf("%s\n", sanitizeTerminal(repo.FullName))
 	fmt.Printf("  source:      %s\n", repo.Source)
 	fmt.Printf("  url:         %s\n", repo.URL)
 	if repo.Description != "" {
-		fmt.Printf("  description: %s\n", repo.Description)
+		fmt.Printf("  description: %s\n", sanitizeTerminal(repo.Description))
 	}
-	fmt.Printf("  language:    %s\n", orDash(repo.PrimaryLanguage))
+	fmt.Printf("  language:    %s\n", sanitizeTerminal(orDash(repo.PrimaryLanguage)))
 	fmt.Printf("  stars:       %d\n", repo.Stars)
-	fmt.Printf("  topics:      %s\n", strings.Join(repo.Topics, ", "))
+	fmt.Printf("  topics:      %s\n", sanitizeTerminal(strings.Join(repo.Topics, ", ")))
 	fmt.Printf("  archived:    %t\n", repo.IsArchived)
 	fmt.Printf("  pushed:      %s\n", dateOrDash(repo.PushedAt))
 	fmt.Printf("  first seen:  %s\n", dateOrDash(repo.FirstSeen))
@@ -72,7 +72,7 @@ func runShow(ctx context.Context, cfg config.Config, args []string) error {
 		if repo.README == "" {
 			fmt.Println("(no README)")
 		} else {
-			fmt.Println(repo.README)
+			fmt.Println(sanitizeTerminal(repo.README))
 		}
 	}
 	return nil

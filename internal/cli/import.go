@@ -67,14 +67,14 @@ func ingest(st storeUpserter, results <-chan gsource.FetchResult, verbose bool) 
 	for res := range results {
 		if res.Err != nil {
 			errored++
-			fmt.Fprintf(os.Stderr, "repogrep: %s: %v\n", res.Record.FullName, res.Err)
+			fmt.Fprintf(os.Stderr, "repogrep: %s: %v\n", sanitizeTerminal(res.Record.FullName), res.Err)
 			continue
 		}
 		now := time.Now()
 		_, inserted, err := st.UpsertRepo(recordToRepo(res.Record, now))
 		if err != nil {
 			errored++
-			fmt.Fprintf(os.Stderr, "repogrep: store %s: %v\n", res.Record.FullName, err)
+			fmt.Fprintf(os.Stderr, "repogrep: store %s: %v\n", sanitizeTerminal(res.Record.FullName), err)
 			continue
 		}
 		if inserted {
@@ -87,7 +87,7 @@ func ingest(st storeUpserter, results <-chan gsource.FetchResult, verbose bool) 
 			if inserted {
 				tag = "+"
 			}
-			fmt.Printf("%s %s\n", tag, res.Record.FullName)
+			fmt.Printf("%s %s\n", tag, sanitizeTerminal(res.Record.FullName))
 		}
 	}
 	return added, updated, errored
