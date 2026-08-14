@@ -7,6 +7,8 @@ full-text search and prune them.
 ## Build
 
 ```sh
+make build   # embeds a version from `git describe`; see `repogrep -V`
+# or, without a version stamp:
 go build -o repogrep ./cmd/repogrep
 ```
 

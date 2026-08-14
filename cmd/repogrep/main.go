@@ -8,6 +8,13 @@ import (
 	"github.com/hueys/repogrep/internal/cli"
 )
 
+// version is overridden at build time via:
+//
+//	go build -ldflags "-X main.version=$(git describe --tags --always --dirty)"
+//
+// See the Makefile's `build` target.
+var version = "dev"
+
 func main() {
-	os.Exit(cli.Execute())
+	os.Exit(cli.Execute(version))
 }

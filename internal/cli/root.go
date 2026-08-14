@@ -34,8 +34,10 @@ func commands() []command {
 	}
 }
 
-// Execute runs the CLI and returns a process exit code.
-func Execute() int {
+// Execute runs the CLI and returns a process exit code. version is printed
+// by `repogrep version` / `-V` / `--version`; callers pass in a value set
+// at build time (see cmd/repogrep/main.go), defaulting to "dev".
+func Execute(version string) int {
 	cfg, err := config.Load()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "repogrep:", err)
@@ -46,6 +48,10 @@ func Execute() int {
 	args := os.Args[1:]
 	if len(args) == 0 || args[0] == "-h" || args[0] == "--help" || args[0] == "help" {
 		printUsage(cmds)
+		return 0
+	}
+	if args[0] == "-V" || args[0] == "--version" || args[0] == "version" {
+		fmt.Println("repogrep " + version)
 		return 0
 	}
 
@@ -78,4 +84,5 @@ func printUsage(cmds []command) {
 		fmt.Fprintf(os.Stderr, "  %-8s %s\n", c.name, c.usage)
 	}
 	fmt.Fprintln(os.Stderr, "\nRun `repogrep <command> -h` for command-specific flags.")
+	fmt.Fprintln(os.Stderr, "Run `repogrep -V` / `--version` / `version` to print the version.")
 }
