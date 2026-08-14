@@ -96,6 +96,10 @@ and `update` pick it up automatically.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Security
+
+See [SECURITY.md](SECURITY.md) for how to report a vulnerability.
+
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md).
