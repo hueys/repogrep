@@ -91,6 +91,10 @@ registers itself by name in an `init()`, e.g. see
 `internal/source/github`. Nothing else needs to change — `import <name>`
 and `update` pick it up automatically.
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md).
