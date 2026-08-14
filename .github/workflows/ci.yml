@@ -41,11 +41,12 @@ jobs:
           go-version-file: go.mod
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@55c2c1448f86e01eaae002a5a3a9624417608d84 # v6.5.2
+        uses: golangci/golangci-lint-action@9fae48acfc02a90574d7c304a1758ef9895495fa # v7.0.1
         with:
-          # Pinned to a v2.x release: the action's "latest" has resolved to
-          # an old v1.x build (built with an older Go than go.mod targets),
-          # which fails to even load our config. Keep in sync with the
+          # action v6 doesn't support golangci-lint v2 at all (hard error);
+          # v7 is required. Pinned to a v2.x golangci-lint release rather
+          # than "latest" since that has previously resolved to a stale
+          # v1.x build incompatible with our go.mod. Keep in sync with the
           # locally installed version (`golangci-lint --version`).
           version: v2.12.2
 
