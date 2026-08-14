@@ -42,7 +42,7 @@ func runImport(ctx context.Context, cfg config.Config, args []string) error {
 	if err != nil {
 		return err
 	}
-	defer st.Close()
+	defer func() { _ = st.Close() }()
 
 	results, err := src.Fetch(ctx, gsource.FetchOptions{
 		Username:    *user,

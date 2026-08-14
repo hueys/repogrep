@@ -23,6 +23,7 @@ func (s *Store) Search(query string, f SearchFilters) ([]model.Repo, error) {
 		return nil, fmt.Errorf("empty search query")
 	}
 
+	//nolint:gosec // G202: prefixColumns only ever concatenates our own static column list, never user input; the query value is always bound via args
 	sqlQuery := `
 		SELECT ` + prefixColumns("r") + `
 		FROM repos r
@@ -52,7 +53,7 @@ func (s *Store) Search(query string, f SearchFilters) ([]model.Repo, error) {
 	if err != nil {
 		return nil, fmt.Errorf("search repos: %w", err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var out []model.Repo
 	for rows.Next() {

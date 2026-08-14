@@ -75,6 +75,6 @@ func backoffFor(err error, attempt int) (time.Duration, bool) {
 
 func expBackoff(attempt int) time.Duration {
 	base := time.Second * time.Duration(int64(1)<<uint(attempt)) // 1s, 2s, 4s, 8s
-	jitter := time.Duration(rand.Int63n(int64(base)/2 + 1))
+	jitter := time.Duration(rand.Int63n(int64(base)/2 + 1))      //nolint:gosec // G404: retry-backoff jitter, not security-sensitive
 	return base + jitter
 }

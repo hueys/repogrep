@@ -53,7 +53,7 @@ func runSearch(ctx context.Context, cfg config.Config, args []string) error {
 	if err != nil {
 		return err
 	}
-	defer st.Close()
+	defer func() { _ = st.Close() }()
 
 	repos, err := st.Search(query, store.SearchFilters{
 		Language:        *lang,

@@ -53,9 +53,9 @@ func TestListStarredPaginates(t *testing.T) {
 		switch page {
 		case "", "1":
 			w.Header().Set("Link", fmt.Sprintf(`<%s/user/starred?page=2>; rel="next"`, "http://"+r.Host))
-			json.NewEncoder(w).Encode([]any{starredJSON(t, "foo", "one")})
+			_ = json.NewEncoder(w).Encode([]any{starredJSON(t, "foo", "one")})
 		case "2":
-			json.NewEncoder(w).Encode([]any{starredJSON(t, "foo", "two")})
+			_ = json.NewEncoder(w).Encode([]any{starredJSON(t, "foo", "two")})
 		default:
 			t.Fatalf("unexpected page %q", page)
 		}
@@ -84,7 +84,7 @@ func TestListStarredRespectsLimit(t *testing.T) {
 	mux.HandleFunc("/user/starred", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Set("Link", fmt.Sprintf(`<%s/user/starred?page=2>; rel="next"`, "http://"+r.Host))
-		json.NewEncoder(w).Encode([]any{starredJSON(t, "foo", "one"), starredJSON(t, "foo", "two")})
+		_ = json.NewEncoder(w).Encode([]any{starredJSON(t, "foo", "one"), starredJSON(t, "foo", "two")})
 	})
 	srv := httptest.NewServer(mux)
 	defer srv.Close()
@@ -103,7 +103,7 @@ func TestFetchReadmeDecodesBase64AndHandles404(t *testing.T) {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/repos/foo/has-readme/readme", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]any{
+		_ = json.NewEncoder(w).Encode(map[string]any{
 			"content":  base64.StdEncoding.EncodeToString([]byte("# Hello\n")),
 			"encoding": "base64",
 			"path":     "README.md",
@@ -111,13 +111,13 @@ func TestFetchReadmeDecodesBase64AndHandles404(t *testing.T) {
 	})
 	mux.HandleFunc("/repos/foo/no-readme/readme", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(map[string]any{"message": "Not Found"})
+		_ = json.NewEncoder(w).Encode(map[string]any{"message": "Not Found"})
 	})
 	mux.HandleFunc("/repos/foo/huge-readme/readme", func(w http.ResponseWriter, r *http.Request) {
 		// GitHub returns encoding "none" (no content body) for files over
 		// 1MB via this endpoint.
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]any{"encoding": "none", "path": "README.md"})
+		_ = json.NewEncoder(w).Encode(map[string]any{"encoding": "none", "path": "README.md"})
 	})
 	srv := httptest.NewServer(mux)
 	defer srv.Close()
@@ -153,13 +153,13 @@ func TestFetchReadmesReportsPerRecordErrors(t *testing.T) {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/repos/foo/ok/readme", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]any{
+		_ = json.NewEncoder(w).Encode(map[string]any{
 			"content": base64.StdEncoding.EncodeToString([]byte("ok readme")), "encoding": "base64", "path": "README.md",
 		})
 	})
 	mux.HandleFunc("/repos/foo/broken/readme", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnprocessableEntity) // non-transient, non-404: exercises the Err path
-		json.NewEncoder(w).Encode(map[string]any{"message": "nope"})
+		_ = json.NewEncoder(w).Encode(map[string]any{"message": "nope"})
 	})
 	srv := httptest.NewServer(mux)
 	defer srv.Close()

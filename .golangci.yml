@@ -1,0 +1,25 @@
+# Repo-scoped override of ~/.golangci.yml's `default: all`. This project
+# sticks to golangci-lint's standard, non-opinionated set rather than the
+# full linter roster (which includes highly subjective/architectural
+# linters like exhaustruct, wsl, varnamelen, and ireturn).
+version: "2"
+
+linters:
+  default: none
+  enable:
+    - errcheck
+    - govet
+    - staticcheck
+    - unused
+    - ineffassign
+    - gosec
+
+formatters:
+  enable:
+    - gofmt
+  settings:
+    gofmt:
+      simplify: true
+
+run:
+  timeout: 5m

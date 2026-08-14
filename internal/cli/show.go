@@ -37,7 +37,7 @@ func runShow(ctx context.Context, cfg config.Config, args []string) error {
 	if err != nil {
 		return err
 	}
-	defer st.Close()
+	defer func() { _ = st.Close() }()
 
 	repo, err := st.FindByFullName(fullName)
 	if err != nil {

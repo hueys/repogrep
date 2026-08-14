@@ -28,7 +28,7 @@ func runPrune(ctx context.Context, cfg config.Config, args []string) error {
 	if err != nil {
 		return err
 	}
-	defer st.Close()
+	defer func() { _ = st.Close() }()
 
 	candidates, err := st.PruneCandidates(*months)
 	if err != nil {
@@ -47,11 +47,11 @@ func runPrune(ctx context.Context, cfg config.Config, args []string) error {
 		}
 	} else {
 		tw := tabwriter.NewWriter(os.Stdout, 0, 2, 2, ' ', 0)
-		fmt.Fprintln(tw, "REPO\tSTARS\tUPDATED\tREASON")
+		_, _ = fmt.Fprintln(tw, "REPO\tSTARS\tUPDATED\tREASON")
 		for _, c := range candidates {
-			fmt.Fprintf(tw, "%s\t%d\t%s\t%s\n", c.Repo.FullName, c.Repo.Stars, dateOrDash(c.Repo.PushedAt), c.Reason)
+			_, _ = fmt.Fprintf(tw, "%s\t%d\t%s\t%s\n", c.Repo.FullName, c.Repo.Stars, dateOrDash(c.Repo.PushedAt), c.Reason)
 		}
-		tw.Flush()
+		_ = tw.Flush()
 	}
 
 	if !*force {

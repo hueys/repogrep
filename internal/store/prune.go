@@ -29,7 +29,7 @@ func (s *Store) PruneCandidates(inactiveMonths int) ([]PruneCandidate, error) {
 	if err != nil {
 		return nil, fmt.Errorf("query prune candidates: %w", err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var out []PruneCandidate
 	for rows.Next() {

@@ -32,7 +32,7 @@ func TestIngestEndToEnd(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Open: %v", err)
 	}
-	defer st.Close()
+	defer func() { _ = st.Close() }()
 
 	recs := []source.RepoRecord{
 		{

@@ -59,7 +59,7 @@ func (s *Store) UpsertRepo(rec model.Repo) (id int64, inserted bool, err error) 
 	if err != nil {
 		return 0, false, fmt.Errorf("begin: %w", err)
 	}
-	defer tx.Rollback()
+	defer func() { _ = tx.Rollback() }()
 
 	err = tx.QueryRow(`SELECT id FROM repos WHERE source = ? AND owner = ? AND name = ?`,
 		rec.Source, rec.Owner, rec.Name).Scan(&id)
@@ -154,7 +154,7 @@ func (s *Store) FindByFullName(fullName string) (model.Repo, error) {
 	if err != nil {
 		return model.Repo{}, fmt.Errorf("find repo: %w", err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var matches []model.Repo
 	for rows.Next() {
@@ -231,7 +231,7 @@ func (s *Store) List(f ListFilters) ([]model.Repo, error) {
 	if err != nil {
 		return nil, fmt.Errorf("list repos: %w", err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var out []model.Repo
 	for rows.Next() {
@@ -255,7 +255,7 @@ func (s *Store) Delete(ids []int64) (int64, error) {
 	for i, id := range ids {
 		args[i] = id
 	}
-	res, err := s.db.Exec(`DELETE FROM repos WHERE id IN (`+placeholders+`)`, args...)
+	res, err := s.db.Exec(`DELETE FROM repos WHERE id IN (`+placeholders+`)`, args...) //nolint:gosec // G202: placeholders is just "?," repeated per id, all values still bound via args
 	if err != nil {
 		return 0, fmt.Errorf("delete repos: %w", err)
 	}
@@ -269,7 +269,7 @@ func (s *Store) ListSources() ([]string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("list sources: %w", err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var out []string
 	for rows.Next() {

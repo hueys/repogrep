@@ -83,7 +83,7 @@ func Load() (Config, error) {
 
 	if dir != "" {
 		path := filepath.Join(dir, "config.yaml")
-		if data, err := os.ReadFile(path); err == nil {
+		if data, err := os.ReadFile(path); err == nil { //nolint:gosec // G304: path is built from our own config dir, not user input
 			if err := yaml.Unmarshal(data, &cfg); err != nil {
 				return cfg, fmt.Errorf("parse %s: %w", path, err)
 			}
