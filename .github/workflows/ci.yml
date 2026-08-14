@@ -12,11 +12,11 @@ jobs:
   build-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
 
-      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
         with:
           go-version-file: go.mod
 
@@ -32,22 +32,24 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
 
-      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
         with:
           go-version-file: go.mod
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@9fae48acfc02a90574d7c304a1758ef9895495fa # v7.0.1
+        uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
         with:
           # action v6 doesn't support golangci-lint v2 at all (hard error);
-          # v7 is required. Pinned to a v2.x golangci-lint release rather
-          # than "latest" since that has previously resolved to a stale
-          # v1.x build incompatible with our go.mod. Keep in sync with the
-          # locally installed version (`golangci-lint --version`).
+          # v7+ is required (v9 pinned here for the node24 runtime; v8 was
+          # the first with golangci-lint v2 support). Pinned to a v2.x
+          # golangci-lint release rather than "latest" since that has
+          # previously resolved to a stale v1.x build incompatible with
+          # our go.mod. Keep in sync with the locally installed version
+          # (`golangci-lint --version`).
           version: v2.12.2
 
       - name: Install zizmor
