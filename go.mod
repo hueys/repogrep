@@ -5,7 +5,7 @@ go 1.26.6
 require (
 	github.com/google/go-github/v75 v75.0.0
 	gopkg.in/yaml.v3 v3.0.1
-	modernc.org/sqlite v1.56.0
+	modernc.org/sqlite v1.57.0
 )
 
 require (
